@@ -1,6 +1,5 @@
-const path = require("path");
-const { fileToLines } = require("../utils");
-const { log } = require("console");
+import { log } from "console";
+import { fileToLines } from "../utils.mjs";
 
 const NUM_WORDS = {
   one: "1",
@@ -50,7 +49,9 @@ function wordsToNums(str) {
 async function main() {
   let filename = "input.txt";
 
-  const lines = await fileToLines(path.resolve(__dirname, filename));
+  const file = new URL(filename, import.meta.url);
+  const lines = fileToLines(file);
+
   const part1 = sumValues(lines);
   log("part1:", part1);
 

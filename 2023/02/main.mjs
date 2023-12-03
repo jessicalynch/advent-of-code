@@ -1,5 +1,5 @@
-const path = require("path");
-const { fileToLines } = require("../utils");
+import { log } from "console";
+import { fileToLines } from "../utils.mjs";
 
 const RED_CUBES = 12;
 const GREEN_CUBES = 13;
@@ -22,7 +22,7 @@ function sumValidGames(lines) {
   return lines.reduce((sum, line, i) => {
     const maxValues = colors.map((color) => getMaxColorValue(color, line));
     const gameValid = maxValues.every((val, i) => val <= maxCubes[i]);
-    console.debug(`Game ${i} valid:`, gameValid);
+    log(`Game ${i} valid:`, gameValid);
 
     return gameValid ? sum + i + 1 : sum;
   }, 0);
@@ -35,22 +35,22 @@ function sumGamePowers(lines) {
     const maxValues = colors.map((color) => getMaxColorValue(color, line));
     const power = maxValues.reduce((product, val) => product * val, 1);
 
-    console.debug(`Game ${i + 1} power:`, power);
+    log(`Game ${i + 1} power:`, power);
     return sum + power;
   }, 0);
 }
 
-async function main() {
-  let filename = "example.txt";
-  filename = "input.txt";
+function main() {
+  let filename = "input.txt";
 
-  const lines = await fileToLines(path.resolve(__dirname, filename));
+  const file = new URL(filename, import.meta.url);
+  const lines = fileToLines(file);
 
   const part1 = sumValidGames(lines);
   const part2 = sumGamePowers(lines);
 
-  console.log("part1:", part1);
-  console.log("part2:", part2);
+  log("part1:", part1);
+  log("part2:", part2);
 }
 
 main();

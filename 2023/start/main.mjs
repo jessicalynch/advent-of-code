@@ -1,5 +1,5 @@
-const path = require("path");
-const { fileToLines } = require("../utils");
+import { log } from "console";
+import { fileToLines } from "../utils.mjs";
 
 function solvePart1(lines) {
   return undefined;
@@ -11,15 +11,15 @@ function solvePart2(lines) {
 
 async function main() {
   let filename = "example.txt";
-  filename = "input.txt";
 
-  const lines = await fileToLines(path.resolve(__dirname, filename));
+  const file = new URL(filename, import.meta.url);
+  const lines = fileToLines(file);
 
   const part1 = solvePart1(lines);
   const part2 = solvePart2(lines);
 
-  console.log("part1:", part1);
-  console.log("part2:", part2);
+  log("part1:", part1);
+  log("part2:", part2);
 }
 
 main();
