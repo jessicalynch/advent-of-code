@@ -1,11 +1,16 @@
 import { log } from "console";
 import { fileToLines } from "../utils.mjs";
 
-function isSymbol(char) {
-  return char && char !== "." && !char?.match(/\d/);
-}
+const isSymbol = (char) => char && !char?.match(/\d|\./);
 
-function isValidNum(line, lines, lineInd, matchInd, matchLen) {
+const isGear = (char) => char === "*";
+
+const xyToGearId = (xy) => `${xy[0]},${xy[1]}`;
+
+const matchPartNums = (line) => line.matchAll(/\d+/g);
+
+const isValidPartNum = (lines, lineInd, matchInd, matchLen) => {
+  const line = lines[lineInd];
   const prevLine = lines[lineInd - 1];
   const nextLine = lines[lineInd + 1];
 
@@ -20,31 +25,91 @@ function isValidNum(line, lines, lineInd, matchInd, matchLen) {
   }
 
   return false;
-}
+};
+
+const sumGearRatios = (gearPartsMap) => {
+  let sum = 0;
+  for (const gearId in gearPartsMap) {
+    if (
+      gearPartsMap.hasOwnProperty(gearId) &&
+      gearPartsMap[gearId].length === 2
+    ) {
+      const [num1, num2] = gearPartsMap[gearId].map(Number);
+      sum += num1 * num2;
+    }
+  }
+  return sum;
+};
+
+const getAdjacentGearIds = (lines, lineInd, matchInd, matchLen) => {
+  const line = lines[lineInd];
+  const prevLine = lines[lineInd - 1];
+  const nextLine = lines[lineInd + 1];
+
+  const gears = [];
+
+  if (isGear(line?.[matchInd - 1])) {
+    gears.push([matchInd - 1, lineInd]);
+  }
+
+  if (isGear(line?.[matchInd + matchLen])) {
+    gears.push([matchInd + matchLen, lineInd]);
+  }
+
+  for (let j = matchInd - 1; j < matchInd + matchLen + 1; j++) {
+    if (isGear(prevLine?.[j])) {
+      gears.push([j, lineInd - 1]);
+    }
+    if (isGear(nextLine?.[j])) {
+      gears.push([j, lineInd + 1]);
+    }
+  }
+
+  return gears.map((xy) => xyToGearId(xy));
+};
 
 function solvePart1(lines) {
-  const validMatches = [];
-  const pattern = /\d+/g;
+  const validParts = [];
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    const matches = [...line.matchAll(pattern)];
+    const matches = matchPartNums(line);
     for (const match of matches) {
       const matchStr = match[0];
-      const matchLen = matchStr.length;
-      const matchInd = match.index;
-      if (isValidNum(line, lines, i, matchInd, matchLen)) {
-        validMatches.push(parseInt(matchStr, 10));
+      if (isValidPartNum(lines, i, match.index, matchStr.length)) {
+        validParts.push(matchStr);
       }
     }
   }
 
-  return validMatches.reduce((sum, val) => {
-    return sum + val;
+  return validParts.reduce((sum, val) => {
+    return sum + Number(val);
   }, 0);
 }
 
 function solvePart2(lines) {
-  return undefined;
+  const gearPartsMap = {};
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const matches = matchPartNums(line);
+    for (const match of matches) {
+      const matchStr = match[0];
+      const gearIds = getAdjacentGearIds(
+        lines,
+        i,
+        match.index,
+        matchStr.length
+      );
+      for (let gearId of gearIds) {
+        if (!gearPartsMap[gearId]) {
+          gearPartsMap[gearId] = [];
+        }
+        gearPartsMap[gearId].push(matchStr);
+      }
+    }
+  }
+
+  return sumGearRatios(gearPartsMap);
 }
 
 async function main() {
