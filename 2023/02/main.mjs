@@ -7,7 +7,7 @@ const BLUE_CUBES = 14;
 
 function getColorMatches(color, line) {
   const regex = new RegExp(`(\\d+) ${color}`, "g");
-  return Array.from(line.matchAll(regex), (m) => parseInt(m[1], 10));
+  return Array.from(line.matchAll(regex), (m) => Number(m[1]));
 }
 
 function getMaxColorValue(color, line) {

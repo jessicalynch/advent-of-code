@@ -19,7 +19,7 @@ function sumValues(lines) {
     if (nums.length > 0) {
       const firstNum = nums[0];
       const lastNum = nums.length > 1 ? nums[nums.length - 1] : firstNum;
-      return sum + parseInt(firstNum + lastNum, 10);
+      return sum + Number(firstNum + lastNum);
     }
     return sum;
   }, 0);
