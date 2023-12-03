@@ -1,5 +1,5 @@
 import { log } from "console";
-import { fileToLines } from "../utils.mjs";
+import { fileToLines, withTime } from "../utils.mjs";
 
 const NUM_WORDS = {
   one: "1",
@@ -46,17 +46,25 @@ function wordsToNums(str) {
   return newStr;
 }
 
-async function main() {
-  let filename = "input.txt";
+function solvePart1(lines) {
+  return sumValues(lines);
+}
+
+function solvePart2(lines) {
+  const replacedLines = lines.map((line) => wordsToNums(line));
+  return sumValues(replacedLines);
+}
+
+export function main() {
+  const filename = "input.txt";
 
   const file = new URL(filename, import.meta.url);
   const lines = fileToLines(file);
 
-  const part1 = sumValues(lines);
-  log("part1:", part1);
+  const part1 = withTime(solvePart1)(lines);
+  const part2 = withTime(solvePart2)(lines);
 
-  const replacedLines = lines.map((line) => wordsToNums(line));
-  const part2 = sumValues(replacedLines);
+  log("part1:", part1);
   log("part2:", part2);
 }
 
