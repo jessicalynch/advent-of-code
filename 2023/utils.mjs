@@ -5,7 +5,7 @@ export const fileToLines = (file) => {
   return data?.split("\n");
 };
 
-export const withTime =
+export const withTimer =
   (fn) =>
   (...args) => {
     const start = performance.now();

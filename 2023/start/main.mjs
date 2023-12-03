@@ -1,5 +1,5 @@
 import { log } from "console";
-import { fileToLines, withTime } from "../utils.mjs";
+import { fileToLines, withTimer } from "../utils.mjs";
 
 function solvePart1(lines) {
   return undefined;
@@ -15,8 +15,8 @@ export function main() {
   const file = new URL(filename, import.meta.url);
   const lines = fileToLines(file);
 
-  const part1 = withTime(solvePart1)(lines);
-  const part2 = withTime(solvePart2)(lines);
+  const part1 = withTimer(solvePart1)(lines);
+  const part2 = withTimer(solvePart2)(lines);
 
   log("part1:", part1);
   log("part2:", part2);
