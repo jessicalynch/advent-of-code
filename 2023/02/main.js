@@ -15,7 +15,7 @@ function getMaxColorValue(color, line) {
   return matches.length ? Math.max(...matches) : 0;
 }
 
-function someValidGames(lines) {
+function sumValidGames(lines) {
   const maxCubes = [RED_CUBES, GREEN_CUBES, BLUE_CUBES];
   const colors = ["red", "green", "blue"];
 
@@ -46,7 +46,7 @@ async function main() {
 
   const lines = await fileToLines(path.resolve(__dirname, filename));
 
-  const part1 = someValidGames(lines);
+  const part1 = sumValidGames(lines);
   const part2 = sumGamePowers(lines);
 
   console.log("part1:", part1);
