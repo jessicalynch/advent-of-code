@@ -46,33 +46,32 @@ const getAdjacentGearIds = (lines, lineInd, matchInd, matchLen) => {
   const prevLine = lines[lineInd - 1];
   const nextLine = lines[lineInd + 1];
 
-  const gears = [];
+  const gearXYCoords = [];
 
   if (isGear(line?.[matchInd - 1])) {
-    gears.push([matchInd - 1, lineInd]);
+    gearXYCoords.push([matchInd - 1, lineInd]);
   }
 
   if (isGear(line?.[matchInd + matchLen])) {
-    gears.push([matchInd + matchLen, lineInd]);
+    gearXYCoords.push([matchInd + matchLen, lineInd]);
   }
 
   for (let j = matchInd - 1; j < matchInd + matchLen + 1; j++) {
     if (isGear(prevLine?.[j])) {
-      gears.push([j, lineInd - 1]);
+      gearXYCoords.push([j, lineInd - 1]);
     }
     if (isGear(nextLine?.[j])) {
-      gears.push([j, lineInd + 1]);
+      gearXYCoords.push([j, lineInd + 1]);
     }
   }
 
-  return gears.map((xy) => xyToGearId(xy));
+  return gearXYCoords.map((xy) => xyToGearId(xy));
 };
 
 function solvePart1(lines) {
   const validParts = [];
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const matches = matchPartNums(line);
+    const matches = matchPartNums(lines[i]);
     for (const match of matches) {
       const matchStr = match[0];
       if (isValidPartNum(lines, i, match.index, matchStr.length)) {
@@ -90,8 +89,7 @@ function solvePart2(lines) {
   const gearPartsMap = {};
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const matches = matchPartNums(line);
+    const matches = matchPartNums(lines[i]);
     for (const match of matches) {
       const matchStr = match[0];
       const gearIds = getAdjacentGearIds(
@@ -113,8 +111,7 @@ function solvePart2(lines) {
 }
 
 async function main() {
-  let filename = "example.txt";
-  filename = "input.txt";
+  const filename = "input.txt";
 
   const file = new URL(filename, import.meta.url);
   const lines = fileToLines(file);
