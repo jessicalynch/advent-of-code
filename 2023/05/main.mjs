@@ -1,44 +1,58 @@
 import { log } from "console";
 import { readFile, withTimer } from "../utils.mjs";
-import { getMaps, seedToLocation } from "./helpers.mjs";
+
+const parseNums = (x) => x.match(/\d+/g).map(Number);
+
+const mapToRanges = (m) => {
+  const ranges = [];
+  for (let i = 0; i < m.length; i += 3) {
+    const destVal = m[i];
+    const sourceVal = m[i + 1];
+    const mapRange = m[i + 2];
+    ranges.push([
+      [sourceVal, sourceVal + mapRange],
+      [destVal, destVal + mapRange],
+    ]);
+  }
+  return ranges;
+};
 
 function solvePart1(input) {
   const blocks = input?.split("\n\n");
-  const seeds = blocks[0].match(/\d+/g).map(Number);
-  const maps = getMaps(blocks);
+  const seeds = parseNums(blocks[0]);
+  const maps = blocks.slice(1).map((block) => parseNums(block));
 
-  let locations = [];
-  for (let seed of seeds) {
-    const location = seedToLocation(seed, maps);
-    locations.push(location);
+  const locations = [];
+  for (const seed of seeds) {
+    let val = seed;
+
+    for (const m of maps) {
+      const ranges = mapToRanges(m);
+
+      for (const r of ranges) {
+        const sourceStart = r[0][0];
+        const sourceEnd = r[0][1];
+        const destStart = r[1][0];
+
+        if (val >= sourceStart && val < sourceEnd) {
+          val = destStart + val - sourceStart;
+          break;
+        }
+      }
+    }
+    locations.push(val);
   }
-
   return Math.min(...locations);
 }
 
 // TODO
 function solvePart2(input) {
   return undefined;
-
-  const blocks = input?.split("\n\n");
-  const seeds = blocks[0].match(/\d+/g).map(Number);
-  const maps = getMaps(blocks);
-  let locations = [];
-
-  for (let i = 0; i < seeds.length - 1; i += 2) {
-    for (let j = seeds[i]; j < seeds[i] + seeds[i + 1]; j++) {
-      let seed = j;
-      const location = seedToLocation(seed, maps);
-      locations.push(location);
-    }
-  }
-
-  return Math.min(...locations);
 }
 
 export async function main() {
   let filename = "input.txt";
-  filename = "example.txt";
+  // filename = "example.txt";
 
   const file = new URL(filename, import.meta.url);
   const input = readFile(file);
