@@ -1,9 +1,11 @@
 import * as fs from "fs";
 
-export const fileToLines = (file) => {
-  const data = fs.readFileSync(file, "utf-8");
-  return data?.split("\n").filter((line) => line.trim().length);
-};
+export const readFile = (file) => fs.readFileSync(file, "utf-8");
+
+export const fileToLines = (file) =>
+  readFile(file)
+    ?.split("\n")
+    .filter((line) => line.trim().length);
 
 export const withTimer =
   (fn) =>
