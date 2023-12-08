@@ -4,13 +4,19 @@ import { fileToLines, withTimer } from "../utils.mjs";
 const parseSteps = (line) =>
   line.replace(/R/g, 1).replace(/L/g, 0).split("").map(Number);
 
-function solvePart1(lines) {
-  const steps = parseSteps(lines[0]);
+const parseNodes = (lines) => {
   const nodes = new Map();
-  for (let line of lines.slice(1)) {
-    const parts = line.match(/[A-Z]{3}/g);
+
+  for (let line of lines) {
+    const parts = line.match(/[0-9A-Z]{3}/g);
     nodes.set(parts[0], parts.slice(1));
   }
+  return nodes;
+};
+
+function solvePart1(lines) {
+  const steps = parseSteps(lines[0]);
+  const nodes = parseNodes(lines.slice(1));
 
   let loc = "AAA";
   let i = 0;
@@ -40,16 +46,11 @@ const lcm = (a, b) => (a * b) / gcd(a, b);
 
 function solvePart2(lines) {
   const steps = parseSteps(lines[0]);
-  const nodes = new Map();
-
-  for (let line of lines.slice(1)) {
-    const parts = line.match(/[0-9A-Z]{3}/g);
-    nodes.set(parts[0], parts.slice(1));
-  }
+  const nodes = parseNodes(lines.slice(1));
 
   const locs = [...nodes.keys()].filter((key) => key.endsWith("A"));
   const zCounts = [];
-  for (let loc of locs) {
+  for (const loc of locs) {
     let i = 0;
     let newLoc = loc;
     let endsWithZ = false;
