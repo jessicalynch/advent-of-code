@@ -15,11 +15,14 @@ export function main() {
   const file = new URL(filename, import.meta.url);
   const lines = fileToLines(file);
 
-  const part1 = withTimer(solvePart1)(lines);
-  const part2 = withTimer(solvePart2)(lines);
-
-  log("part1:", part1);
-  log("part2:", part2);
+  try {
+    const part1 = withTimer(solvePart1)(lines);
+    const part2 = withTimer(solvePart2)(lines);
+    log("part1:", part1);
+    log("part2:", part2);
+  } catch (err) {
+    log(err);
+  }
 }
 
 main();
