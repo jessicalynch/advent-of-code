@@ -33,9 +33,9 @@ function solvePart1(lines) {
       const currArr = diffArrays[i];
       const prevArr = diffArrays[i + 1];
       const diff = prevArr[prevArr.length - 1];
-      const currArrLastInd = currArr[currArr.length - 1];
-      const newLastInd = currArrLastInd + diff;
-      currArr.push(newLastInd);
+      const currArrLastElem = currArr[currArr.length - 1];
+      const newLastElem = currArrLastElem + diff;
+      currArr.push(newLastElem);
     }
     const nextVal = diffArrays[0][diffArrays[0].length - 1];
     sum += nextVal;
@@ -53,9 +53,9 @@ function solvePart2(lines) {
       const currArr = diffArrays[i];
       const prevArr = diffArrays[i + 1];
       const diff = prevArr[0];
-      const currArrFirstInd = currArr[0];
-      const newFirstInd = currArrFirstInd - diff;
-      currArr.unshift(newFirstInd);
+      const currArrFirstElem = currArr[0];
+      const newFirstElem = currArrFirstElem - diff;
+      currArr.unshift(newFirstElem);
     }
     const nextVal = diffArrays[0][0];
     sum += nextVal;
