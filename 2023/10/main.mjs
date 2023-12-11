@@ -1,6 +1,18 @@
 import { log } from "console";
 import { fileToLines, withTimer } from "../utils.mjs";
 
+const getSLoc = (lines) => {
+  let sLoc;
+  for (let y = 0; y < lines.length; y++) {
+    let x = lines[y].indexOf("S");
+    if (x !== -1) {
+      sLoc = [x, y];
+      break;
+    }
+  }
+  return sLoc;
+};
+
 const getEdges = (sLoc, lines) => {
   let [x, y] = sLoc;
   let top = lines?.[y - 1]?.[x];
@@ -13,16 +25,19 @@ const getEdges = (sLoc, lines) => {
 const getPipe = (edges) => {
   const [top, right, bottom, left] = edges;
 
-  if (right === "-" && bottom === "|") {
+  if (
+    (right === "-" || right === "7") &&
+    (bottom === "|" || bottom == "J" || bottom === "L")
+  ) {
     return "F";
   }
-  if (left === "-" && bottom === "|") {
+  if ((left === "-" || left === "F") && (bottom === "|" || bottom === "L")) {
     return "7";
   }
-  if (top === "|" && left === "-") {
+  if ((top === "|" || top === "7") && (left === "-" || left === "L")) {
     return "J";
   }
-  if (top === "|" && right === "-") {
+  if ((top === "|" && right === "-") || (left === "F" && right === "F")) {
     return "L";
   }
 
@@ -32,6 +47,7 @@ const getPipe = (edges) => {
 
   return "-";
 };
+
 const getNextLoc = (loc, lines) => {
   if (!loc) {
     return undefined;
@@ -39,8 +55,6 @@ const getNextLoc = (loc, lines) => {
   const [x, y, prevDir] = loc;
 
   const currChar = lines[y][x];
-  log("currLoc", loc);
-  log("lines", lines[y][x]);
 
   if (currChar === "F") {
     if (prevDir === "left") {
@@ -81,22 +95,100 @@ const getNextLoc = (loc, lines) => {
     return [x, y + 1, "down"];
   }
 };
-function solvePart1(lines) {
-  let sLoc;
-  for (let y = 0; y < lines.length; y++) {
-    let x = lines[y].indexOf("S");
-    if (x !== -1) {
-      sLoc = [x, y];
-      break;
+
+const inBounds = (x, y, grid) =>
+  x >= 0 && x < grid?.[y]?.length && y >= 0 && y < grid?.length;
+
+const replaceX = (str, x, char) =>
+  str.substring(0, x) + char + str.substring(x + 1);
+
+const floodFill = (startX, startY, grid) => {
+  let g = grid.map((row) => [...row]);
+  let queue = [[startX, startY]];
+
+  while (queue.length > 0) {
+    let [x, y] = queue.shift();
+    if (
+      !inBounds(x, y, g) ||
+      g[y][x] === "|" ||
+      g[y][x] === "-" ||
+      g[y][x] === "O"
+    ) {
+      continue;
+    }
+
+    g[y][x] = "O";
+    queue.push([x + 1, y]);
+    queue.push([x - 1, y]);
+    queue.push([x, y + 1]);
+    queue.push([x, y - 1]);
+  }
+  return g;
+};
+
+const magnify = (grid) => {
+  const numRows = grid.length;
+  const numCols = grid[0].length;
+
+  const g = Array(numRows * 3)
+    .fill(null)
+    .map(() => Array(numCols * 3).fill(" "));
+
+  for (let y = 0; y < numRows; y++) {
+    for (let x = 0; x < numCols; x++) {
+      const cell = grid[y][x];
+      if (cell === "|") {
+        g[y * 3 + 1][x * 3 + 1] = "|";
+        g[y * 3][x * 3 + 1] = "|";
+        g[y * 3 + 2][x * 3 + 1] = "|";
+        continue;
+      }
+      if (cell === "-") {
+        g[y * 3 + 1][x * 3] = "-";
+        g[y * 3 + 1][x * 3 + 1] = "-";
+        g[y * 3 + 1][x * 3 + 2] = "-";
+        continue;
+      }
+      if (cell === "7") {
+        g[y * 3 + 1][x * 3] = "-";
+        g[y * 3 + 1][x * 3 + 1] = "-";
+        g[y * 3 + 2][x * 3 + 1] = "|";
+        continue;
+      }
+      if (cell === "F") {
+        g[y * 3 + 1][x * 3 + 1] = "-";
+        g[y * 3 + 1][x * 3 + 2] = "-";
+        g[y * 3 + 2][x * 3 + 1] = "|";
+        continue;
+      }
+      if (cell === "J") {
+        g[y * 3][x * 3 + 1] = "|";
+        g[y * 3 + 1][x * 3] = "-";
+        g[y * 3 + 1][x * 3 + 1] = "-";
+        continue;
+      }
+      if (cell === "L") {
+        g[y * 3][x * 3 + 1] = "|";
+        g[y * 3 + 1][x * 3 + 1] = "-";
+        g[y * 3 + 1][x * 3 + 2] = "-";
+      }
     }
   }
-  log("S", sLoc);
-  let edges = getEdges(sLoc, lines);
-  let sChar = getPipe(edges);
-  let [x, y] = sLoc;
-  log(edges);
-  log(sChar);
-  let sLines = [...lines];
+  return g;
+};
+
+const printGrid = (grid) => {
+  for (let row of grid) {
+    log(row.join());
+  }
+};
+
+function solvePart1(lines) {
+  const sLoc = getSLoc(lines);
+  const edges = getEdges(sLoc, lines);
+  const sChar = getPipe(edges);
+  const [x, y] = sLoc;
+  const sLines = [...lines];
   sLines[y] = sLines[y].replace("S", sChar);
   let nextLoc = getNextLoc(sLoc, sLines);
   let loc = nextLoc;
@@ -104,71 +196,69 @@ function solvePart1(lines) {
   while (loc !== sLoc && loc !== undefined) {
     numTurns++;
     loc = getNextLoc(loc, lines);
-
-    log("new loc", loc);
   }
-
-  log(numTurns);
-  log(lines);
 
   return numTurns / 2;
 }
 
-// TODO
 function solvePart2(lines) {
-  let sLoc;
-  for (let y = 0; y < lines.length; y++) {
-    let x = lines[y].indexOf("S");
-    if (x !== -1) {
-      sLoc = [x, y];
-      break;
-    }
-  }
-  log("S", sLoc);
-  let edges = getEdges(sLoc, lines);
-  let sChar = getPipe(edges);
-  let [x, y] = sLoc;
-  log(edges);
-  log(sChar);
-  let sLines = [...lines];
+  const sLoc = getSLoc(lines);
+  const edges = getEdges(sLoc, lines);
+  const sChar = getPipe(edges);
+  const [x, y] = sLoc;
+  const sLines = [...lines];
   sLines[y] = sLines[y].replace("S", sChar);
   let nextLoc = getNextLoc(sLoc, sLines);
+
   let loc = nextLoc;
-  let numTurns = 0;
+  let loop = new Set();
+  loop.add(`${x},${y}`);
+
   while (loc !== sLoc && loc !== undefined) {
     let [currX, currY] = loc;
-    numTurns++;
+    loop.add(`${currX},${currY}`);
     loc = getNextLoc(loc, lines);
-    lines[currY] =
-      lines[currY].substring(0, currX) +
-      "X" +
-      lines[currY].substring(currX + 1);
   }
 
-  log(lines);
-  let enclosedTiles = 0;
+  lines[y] = replaceX(lines[y], x, sChar);
+
   for (let y = 0; y < lines.length; y++) {
     for (let x = 0; x < lines[y].length; x++) {
-      let charEdges = getEdges([x, y], lines);
-      if (charEdges.every((edgeChar) => edgeChar === "X")) {
-        enclosedTiles++;
+      if (!loop.has(`${x},${y}`)) {
+        lines[y] = replaceX(lines[y], x, ".");
       }
     }
   }
-  return enclosedTiles;
+
+  let grid = magnify(lines);
+  grid = floodFill(0, 0, grid);
+
+  let numTiles = 0;
+  for (let y = 0; y < lines.length; y++) {
+    for (let x = 0; x < lines[0].length; x++) {
+      let magnifiedY = y * 3 + 1;
+      let magnifiedX = x * 3 + 1;
+
+      if (grid[magnifiedY][magnifiedX] == " ") {
+        numTiles++;
+      }
+    }
+  }
+  printGrid(grid);
+  return numTiles;
 }
 
 export function main() {
-  let filename = "example.txt";
+  let filename = "example2.txt";
   filename = "input.txt";
 
   const file = new URL(filename, import.meta.url);
   const lines = fileToLines(file);
 
   try {
-    // const part1 = withTimer(solvePart1)(lines);
+    const part1 = withTimer(solvePart1)(lines);
     const part2 = withTimer(solvePart2)(lines);
-    // log("part1:", part1);
+    log("part1:", part1);
     log("part2:", part2);
   } catch (err) {
     log(err);
