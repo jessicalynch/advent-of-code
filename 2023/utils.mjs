@@ -16,3 +16,9 @@ export const withTimer =
     console.log(`Time to run ${fn.name}: ${end - start} ms`);
     return result;
   };
+
+export const printLines = (lines) => {
+  for (let line of lines) {
+    console.log(line.join());
+  }
+};

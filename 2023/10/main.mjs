@@ -1,20 +1,20 @@
 import { log } from "console";
-import { fileToLines, withTimer } from "../utils.mjs";
+import { fileToLines, printLines, withTimer } from "../utils.mjs";
 
-const getSLoc = (lines) => {
-  let sLoc;
+const getStartLoc = (lines) => {
+  let startLoc;
   for (let y = 0; y < lines.length; y++) {
     let x = lines[y].indexOf("S");
     if (x !== -1) {
-      sLoc = [x, y];
+      startLoc = [x, y];
       break;
     }
   }
-  return sLoc;
+  return startLoc;
 };
 
-const getEdges = (sLoc, lines) => {
-  let [x, y] = sLoc;
+const getEdges = (startLoc, lines) => {
+  let [x, y] = startLoc;
   let top = lines?.[y - 1]?.[x];
   let right = lines?.[y]?.[x + 1];
   let bottom = lines?.[y + 1]?.[x];
@@ -50,10 +50,9 @@ const getPipe = (edges) => {
 
 const getNextLoc = (loc, lines) => {
   if (!loc) {
-    return undefined;
+    throw new Error("Invalid loc");
   }
   const [x, y, prevDir] = loc;
-
   const currChar = lines[y][x];
 
   if (currChar === "F") {
@@ -94,6 +93,8 @@ const getNextLoc = (loc, lines) => {
     }
     return [x, y + 1, "down"];
   }
+
+  return undefined;
 };
 
 const inBounds = (x, y, grid) =>
@@ -127,6 +128,18 @@ const floodFill = (startX, startY, grid) => {
 };
 
 const magnify = (grid) => {
+  /*
+    F       7       L       J
+    . . .   . . .   . | .   . | .
+    . - -   - - .   . - -   - - .
+    . | .   . | .   . . .   . . .
+
+
+    |       -
+    . | .   . . .
+    . | .   - - -
+    . | .   . . .
+  */
   const numRows = grid.length;
   const numCols = grid[0].length;
 
@@ -137,63 +150,63 @@ const magnify = (grid) => {
   for (let y = 0; y < numRows; y++) {
     for (let x = 0; x < numCols; x++) {
       const cell = grid[y][x];
+      let magnifiedY = y * 3;
+      let magnifiedX = x * 3;
       if (cell === "|") {
-        g[y * 3 + 1][x * 3 + 1] = "|";
-        g[y * 3][x * 3 + 1] = "|";
-        g[y * 3 + 2][x * 3 + 1] = "|";
+        g[magnifiedY][magnifiedX + 1] = "|";
+        g[magnifiedY + 1][magnifiedX + 1] = "|";
+        g[magnifiedY + 2][magnifiedX + 1] = "|";
         continue;
       }
       if (cell === "-") {
-        g[y * 3 + 1][x * 3] = "-";
-        g[y * 3 + 1][x * 3 + 1] = "-";
-        g[y * 3 + 1][x * 3 + 2] = "-";
-        continue;
-      }
-      if (cell === "7") {
-        g[y * 3 + 1][x * 3] = "-";
-        g[y * 3 + 1][x * 3 + 1] = "-";
-        g[y * 3 + 2][x * 3 + 1] = "|";
+        g[magnifiedY + 1][magnifiedX] = "-";
+        g[magnifiedY + 1][magnifiedX + 1] = "-";
+        g[magnifiedY + 1][magnifiedX + 2] = "-";
         continue;
       }
       if (cell === "F") {
-        g[y * 3 + 1][x * 3 + 1] = "-";
-        g[y * 3 + 1][x * 3 + 2] = "-";
-        g[y * 3 + 2][x * 3 + 1] = "|";
+        g[magnifiedY + 1][magnifiedX + 1] = "-";
+        g[magnifiedY + 1][magnifiedX + 2] = "-";
+        g[magnifiedY + 2][magnifiedX + 1] = "|";
+        continue;
+      }
+      if (cell === "7") {
+        g[magnifiedY + 1][magnifiedX] = "-";
+        g[magnifiedY + 1][magnifiedX + 1] = "-";
+        g[magnifiedY + 2][magnifiedX + 1] = "|";
         continue;
       }
       if (cell === "J") {
-        g[y * 3][x * 3 + 1] = "|";
-        g[y * 3 + 1][x * 3] = "-";
-        g[y * 3 + 1][x * 3 + 1] = "-";
+        g[magnifiedY][magnifiedX + 1] = "|";
+        g[magnifiedY + 1][magnifiedX] = "-";
+        g[magnifiedY + 1][magnifiedX + 1] = "-";
         continue;
       }
       if (cell === "L") {
-        g[y * 3][x * 3 + 1] = "|";
-        g[y * 3 + 1][x * 3 + 1] = "-";
-        g[y * 3 + 1][x * 3 + 2] = "-";
+        g[magnifiedY][magnifiedX + 1] = "|";
+        g[magnifiedY + 1][magnifiedX + 1] = "-";
+        g[magnifiedY + 1][magnifiedX + 2] = "-";
       }
     }
   }
   return g;
 };
 
-const printGrid = (grid) => {
-  for (let row of grid) {
-    log(row.join());
-  }
-};
-
 function solvePart1(lines) {
-  const sLoc = getSLoc(lines);
-  const edges = getEdges(sLoc, lines);
-  const sChar = getPipe(edges);
-  const [x, y] = sLoc;
-  const sLines = [...lines];
-  sLines[y] = sLines[y].replace("S", sChar);
-  let nextLoc = getNextLoc(sLoc, sLines);
-  let loc = nextLoc;
+  const startLoc = getStartLoc(lines);
+  const edges = getEdges(startLoc, lines);
+  const startChar = getPipe(edges);
+
+  const [_, startY] = startLoc;
+  const tmpLines = [...lines];
+
+  tmpLines[startY] = lines[startY].replace("S", startChar);
+
+  let loc = getNextLoc(startLoc, tmpLines);
   let numTurns = 0;
-  while (loc !== sLoc && loc !== undefined) {
+
+  // loc becomes undefined when `S` is reached
+  while (loc) {
     numTurns++;
     loc = getNextLoc(loc, lines);
   }
@@ -202,26 +215,29 @@ function solvePart1(lines) {
 }
 
 function solvePart2(lines) {
-  const sLoc = getSLoc(lines);
-  const edges = getEdges(sLoc, lines);
-  const sChar = getPipe(edges);
-  const [x, y] = sLoc;
-  const sLines = [...lines];
-  sLines[y] = sLines[y].replace("S", sChar);
-  let nextLoc = getNextLoc(sLoc, sLines);
+  const startLoc = getStartLoc(lines);
+  const edges = getEdges(startLoc, lines);
+  const startChar = getPipe(edges);
 
-  let loc = nextLoc;
+  const [_, startY] = startLoc;
+  const tmpLines = [...lines];
+  tmpLines[startY] = lines[startY].replace("S", startChar);
+
+  let loc = getNextLoc(startLoc, tmpLines);
   let loop = new Set();
-  loop.add(`${x},${y}`);
 
-  while (loc !== sLoc && loc !== undefined) {
-    let [currX, currY] = loc;
-    loop.add(`${currX},${currY}`);
+  while (loc) {
+    let [nextX, nextY] = loc;
+    loop.add(`${nextX},${nextY}`);
     loc = getNextLoc(loc, lines);
+    if (loc !== undefined) {
+      [nextX, nextY] = loc;
+    }
   }
 
-  lines[y] = replaceX(lines[y], x, sChar);
+  lines[startY] = tmpLines[startY];
 
+  // Remove junk pipes
   for (let y = 0; y < lines.length; y++) {
     for (let x = 0; x < lines[y].length; x++) {
       if (!loop.has(`${x},${y}`)) {
@@ -230,7 +246,10 @@ function solvePart2(lines) {
     }
   }
 
+  // Magnify grid for spaces between pipes
   let grid = magnify(lines);
+
+  // Fill outside tiles with `O`
   grid = floodFill(0, 0, grid);
 
   let numTiles = 0;
@@ -244,12 +263,13 @@ function solvePart2(lines) {
       }
     }
   }
-  printGrid(grid);
+
+  printLines(grid);
   return numTiles;
 }
 
 export function main() {
-  let filename = "example2.txt";
+  let filename = "example1.txt";
   filename = "input.txt";
 
   const file = new URL(filename, import.meta.url);

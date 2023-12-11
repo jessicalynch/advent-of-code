@@ -1,0 +1,19 @@
+Time to run solvePart1: 0.22677600383758545 ms
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,-,-,-,-,-,-,-,O,O,O,O
+O,O,O,O,|, , , , , ,|,O,O,O,O
+O,O,O,O,|, , , , , ,|,O,O,O,O
+O,O,O,O,|, , , , , ,|,O,O,O,O
+O,O,O,O,|, , , , , ,|,O,O,O,O
+O,O,O,O,|, , , , , ,|,O,O,O,O
+O,O,O,O,-,-,-,-,-,-,-,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+Time to run solvePart2: 1.3758739829063416 ms
+part1: 4
+part2: 1

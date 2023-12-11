@@ -1,0 +1,31 @@
+Time to run solvePart1: 0.33833497762680054 ms
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,O,O,O,O
+O,O,O,O,|, , , , , , , , , , , , , , , , , , , , , , , ,|,O,O,O,O
+O,O,O,O,|, , , , , , , , , , , , , , , , , , , , , , , ,|,O,O,O,O
+O,O,O,O,|, , ,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-, , ,|,O,O,O,O
+O,O,O,O,|, , ,|,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,|, , ,|,O,O,O,O
+O,O,O,O,|, , ,|,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,|, , ,|,O,O,O,O
+O,O,O,O,|, , ,|,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,|, , ,|,O,O,O,O
+O,O,O,O,|, , ,|,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,|, , ,|,O,O,O,O
+O,O,O,O,|, , ,|,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,|, , ,|,O,O,O,O
+O,O,O,O,|, , ,|,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,|, , ,|,O,O,O,O
+O,O,O,O,|, , ,|,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,|, , ,|,O,O,O,O
+O,O,O,O,|, , ,|,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,|, , ,|,O,O,O,O
+O,O,O,O,|, , ,-,-,-,-,-,-,-,O,O,O,O,O,-,-,-,-,-,-,-, , ,|,O,O,O,O
+O,O,O,O,|, , , , , , , , ,|,O,O,O,O,O,|, , , , , , , , ,|,O,O,O,O
+O,O,O,O,|, , , , , , , , ,|,O,O,O,O,O,|, , , , , , , , ,|,O,O,O,O
+O,O,O,O,|, , , , , , , , ,|,O,O,O,O,O,|, , , , , , , , ,|,O,O,O,O
+O,O,O,O,|, , , , , , , , ,|,O,O,O,O,O,|, , , , , , , , ,|,O,O,O,O
+O,O,O,O,|, , , , , , , , ,|,O,O,O,O,O,|, , , , , , , , ,|,O,O,O,O
+O,O,O,O,-,-,-,-,-,-,-,-,-,-,O,O,O,O,O,-,-,-,-,-,-,-,-,-,-,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
+Time to run solvePart2: 3.5341959595680237 ms
+part1: 23
+part2: 4
