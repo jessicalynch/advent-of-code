@@ -264,7 +264,7 @@ function solvePart2(lines) {
     }
   }
 
-  printLines(grid);
+  printLines(grid, true);
   return numTiles;
 }
 

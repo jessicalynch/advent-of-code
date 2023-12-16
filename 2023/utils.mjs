@@ -17,8 +17,8 @@ export const withTimer =
     return result;
   };
 
-export const printLines = (lines) => {
+export const printLines = (lines, join = false) => {
   for (let line of lines) {
-    console.log(line.join());
+    console.log(join ? line.join() : line);
   }
 };

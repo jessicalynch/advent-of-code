@@ -1,11 +1,6 @@
 import { log } from "console";
+import { getXIntercepts } from "../math.mjs";
 import { fileToLines, withTimer } from "../utils.mjs";
-
-function getXIntercepts(a, b, c) {
-  var x1 = (-1 * b + Math.sqrt(Math.pow(b, 2) - 4 * a * c)) / (2 * a);
-  var x2 = (-1 * b - Math.sqrt(Math.pow(b, 2) - 4 * a * c)) / (2 * a);
-  return [x1, x2];
-}
 
 function multiplyTotalWays(times, distances) {
   let acc = 1;
